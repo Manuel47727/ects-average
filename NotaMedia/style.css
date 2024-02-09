@@ -1,0 +1,115 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f0f0f0;
+  margin: 20px;
+}
+
+body,
+html {
+  height: 100%;
+}
+
+.container1 {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin-right: -50%;
+  transform: translate(-50%, -50%);
+  z-index: -1;
+}
+
+.background {
+  font-size: 5rem;
+  color: black;
+  opacity: 0.5;
+}
+
+.containeryear {
+    display: flex;
+    max-height: 2rem;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+select.ano {
+  padding: 8px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-right: 10px;
+}
+
+button#calculateButton {
+  padding: 10px 20px;
+  font-size: 16px;
+  border: none;
+  border-radius: 4px;
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  transition: 0.5s;
+}
+
+button#calculateButton:hover {
+  background-color: #0056b3;
+}
+
+.maincontainer {
+  margin-top: 20px;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.cursoano {
+  display: flex;
+  justify-content: space-around;
+  gap: 15rem;
+}
+
+.semestres {
+  align-items: center;
+  align-content: center;
+  font-weight: 800;
+}
+
+.anos {
+  font-weight: bold;
+  font-size: 1.1rem;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  align-content: stretch;
+  flex-direction: row;
+}
+
+.cadeirasnotas > .cadeirasnotas {
+  display: flex;
+  flex-direction: column;
+}
+
+.notas {
+  display: flex;
+  flex-direction: column;
+  margin-top: 0.5rem;
+  max-width: 5rem;
+  min-height: 1.5rem;
+  border: 0.5px solid;
+  border-radius: 2px;
+  text-align: center;
+  transition: 0.5s;
+}
+
+.notas:hover {
+  border-color: rgb(156, 156, 156);
+}
+
+.valormedia {
+    font-size: 2rem;
+    font-weight: bold;
+    color: black;
+    margin-top: 20px;
+    padding: 20px;
+    border-radius: 4px;
+}

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Media de Notas</title>
+    <link rel="stylesheet" href="/NotaMedia/style.css">
+</head>
+<body>
+    <div class="container1">
+        <p class = "background">Engenharia</br>Informatica</p>
+    </div>
+    <main>
+        <div class = "maincontainer">
+            <div class="containeryear">
+                <p>Esta em que Ano</p>
+                <select class = "ano" name="ano" id="ano">
+                    <option selected="selected" disabled>Escolha um ano</option>
+                    <option value="1">1 Ano</option>
+                    <option value="2">2 Ano</option>
+                    <option value="3">3 Ano</option>
+                </select>
+            </div>
+            <div class="cadeirasnotas" id= "cadeirasnotas"></div>
+            <div class = "buttonandresult">
+                <button id="calculateButton">Calcular</button>
+                <div id="notaMedia"></div>
+            </div>
+        </div>
+    </main>
+    
+    <script src="main.js"></script>
+</body>
+</html>
