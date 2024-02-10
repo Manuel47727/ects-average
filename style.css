@@ -113,3 +113,9 @@ button#calculateButton:hover {
     padding: 20px;
     border-radius: 4px;
 }
+
+@media screen and (max-width: 480px) {
+  .cursoano {
+    gap: 10rem;
+  }
+}
