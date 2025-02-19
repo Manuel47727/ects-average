@@ -73,115 +73,153 @@ const cadeira = [
   ],
 ];
 
+function initializeGrades() {
+  const savedGrades = localStorage.getItem("savedGrades");
+  if (savedGrades) {
+    const grades = JSON.parse(savedGrades);
+    let cont = 1;
+    for (let i = 1; i < cadeira.length; i++) {
+      for (let k = 1; k < cadeira[i].length; k++) {
+        for (let j = 1; j < cadeira[i][k].length; j++) {
+          for (let m = 0; m < cadeira[i][k][j].length; m++) {
+            if (grades[`nota${cont}`]) {
+              cadeira[i][k][j][m][2] = parseFloat(grades[`nota${cont}`]) || 0.0;
+            }
+            cont++;
+          }
+        }
+      }
+    }
+  }
+}
+
 function showItems(args, selectedValue) {
   let cont = 0;
   let items = "";
-  
-
-  items += `<div class = "cursoano"><p class = "curso">${args[0]}</p><p> 2023/2024</p></div>`;
-
+  items += `<div class="cursoano"><p class="curso">${args[0]}</p><p>2023/2024</p></div>`;
   for (let i = 1; i <= selectedValue; i++) {
-    items += `<hr><p class = "anos">${args[i][0]}</p>`;
+    items += `<hr><p class="anos">${args[i][0]}</p>`;
     for (let k = 1; k < args[i].length; k++) {
-      items += `<p class = "semestres">${args[i][k][0]}</p>`;
+      items += `<p class="semestres">${args[i][k][0]}</p>`;
       for (let j = 1; j < args[i][k].length; j++) {
         for (let m = 0; m < args[i][k][j].length; m++) {
           cont += 1;
-          items += `<div class = "cadeirasnotas">
-                      <p class = "nomecadeira">${args[i][k][j][m][0]} (${args[i][k][j][m][1]} ECTS) 
-                         <input class = "notas" id="nota${cont}" min="0" max="20" placeholder="Nota Final">
+          items += `<div class="cadeirasnotas">
+                      <p class="nomecadeira">${args[i][k][j][m][0]} (${
+            args[i][k][j][m][1]
+          } ECTS) 
+                         <input class="notas" 
+                                id="nota${cont}" 
+                                min="0" 
+                                max="20" 
+                                placeholder="Nota Final" 
+                                value="${args[i][k][j][m][2] || ""}"
+                                oninput="saveGrades()">
                       </p>
                     </div>`;
         }
       }
     }
   }
-
   return items;
 }
 
-document.getElementById("calculateButton").addEventListener("click", calculateMedia);
-
 function calculateMedia() {
-  let notaMedia = 0;
-  let cont = 1;
-  let ectsTotal = 0;
-  let notaTotal = 0;
-  let items = "";
-
   const selectElement = document.getElementById("ano");
   const selectedValue = parseInt(selectElement.value);
+  let totalECTS = 0;
+  let weightedSum = 0;
+  let cont = 1;
 
   for (let i = 1; i <= selectedValue; i++) {
     for (let k = 1; k < cadeira[i].length; k++) {
       for (let j = 1; j < cadeira[i][k].length; j++) {
         for (let m = 0; m < cadeira[i][k][j].length; m++) {
           const notaInput = document.getElementById(`nota${cont}`);
-          if (notaInput) {
-            const nota = parseFloat(notaInput.value);
-            console.log(nota);
-            if (nota >= 0) {
-              cont += 1;
-              cadeira[i][k][j][m][2] = nota;
-              ectsTotal = ectsTotal + cadeira[i][k][j][m][1];
-              notaTotal =
-                notaTotal +
-                parseFloat(cadeira[i][k][j][m][2]) *
-                  parseFloat(cadeira[i][k][j][m][1]);
-            } else {
-              cont += 1;
-            }
+          if (notaInput && notaInput.value !== "") {
+            const grade = parseFloat(notaInput.value);
+            const ects = cadeira[i][k][j][m][1];
+            weightedSum += grade * ects;
+            totalECTS += ects;
           }
+          cont++;
         }
       }
     }
   }
-  notaMedia = notaTotal / ectsTotal;
-  items += notaMedia.toFixed(2);
-  return items;
+
+  return totalECTS > 0 ? (weightedSum / totalECTS).toFixed(2) : NaN;
 }
 
-function displayMedia() {
-  const mediaResult = calculateMedia();
-  const notaMediaElement = document.getElementById("notaMedia");
+function saveGrades() {
+  let grades = {};
+  let cont = 1;
 
-  if (!isNaN(mediaResult)) {
-      notaMediaElement.innerHTML = `<p>${mediaResult}</p>`;
-  } else {
-      notaMediaElement.innerHTML = "";
+  for (let i = 1; i < cadeira.length; i++) {
+    for (let k = 1; k < cadeira[i].length; k++) {
+      for (let j = 1; j < cadeira[i][k].length; j++) {
+        for (let m = 0; m < cadeira[i][k][j].length; m++) {
+          const notaInput = document.getElementById(`nota${cont}`);
+          if (notaInput) {
+            grades[`nota${cont}`] = notaInput.value;
+            cadeira[i][k][j][m][2] = parseFloat(notaInput.value) || 0.0;
+          }
+          cont++;
+        }
+      }
+    }
+  }
+  localStorage.setItem("savedGrades", JSON.stringify(grades));
+}
+
+function loadGrades() {
+  const savedGrades = localStorage.getItem("savedGrades");
+  if (savedGrades) {
+    const grades = JSON.parse(savedGrades);
+    for (const key in grades) {
+      const notaInput = document.getElementById(key);
+      if (notaInput) {
+        notaInput.value = grades[key];
+      }
+    }
   }
 }
 
 function updateDisplay() {
   const selectElement = document.getElementById("ano");
-  const divElement = document.getElementById("cadeirasnotas")
-  const selectedValue = parseInt(selectElement.value);
-  divElement.innerHTML = `
-        <p>
-        ${showItems(cadeira, selectedValue)}
-        </p>
-        `;
+  const divElement = document.getElementById("cadeirasnotas");
 
-  displayMedia();
+  if (selectElement.value === "Escolha um ano") {
+    divElement.innerHTML = "";
+    return;
+  }
+
+  const selectedValue = parseInt(selectElement.value);
+  divElement.innerHTML = `<p>${showItems(cadeira, selectedValue)}</p>`;
 }
 
-document.getElementById("ano").addEventListener("change", updateDisplay);
+window.onload = function () {
+  initializeGrades();
 
-calculateButton.addEventListener("click", () => {
-  const mediaResult = calculateMedia();
-  const notaMediaElement = document.getElementById("notaMedia");
+  const selectElement = document.getElementById("ano");
+  selectElement.addEventListener("change", updateDisplay);
 
-  if (!isNaN(mediaResult)) {
-      notaMediaElement.innerHTML = `<p class = "valormedia">${mediaResult}</p>`;
-  }
-});
+  const calculateButton = document.getElementById("calculateButton");
+  calculateButton.addEventListener("click", () => {
+    const mediaResult = calculateMedia();
+    const notaMediaElement = document.getElementById("notaMedia");
 
-updateDisplay();
+    if (!isNaN(mediaResult)) {
+      notaMediaElement.innerHTML = `<p class="valormedia">${mediaResult}</p>`;
+    }
+  });
 
-
-calculateButton.addEventListener("click", function() {
+  calculateButton.addEventListener("click", function () {
     window.scroll({
-        top: window.scrollY + 500,
-        behavior: 'smooth'
+      top: window.scrollY + 500,
+      behavior: "smooth",
     });
-});
+  });
+
+  updateDisplay();
+};
